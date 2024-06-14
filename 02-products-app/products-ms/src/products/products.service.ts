@@ -51,7 +51,7 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
       throw new NotFoundException(`Product with id #${id} not found`)
     }
 
-  
+    return product
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {
