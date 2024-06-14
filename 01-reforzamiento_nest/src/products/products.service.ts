@@ -7,7 +7,7 @@ import { v4 as Uuidv4 } from 'uuid'
 @Injectable()
 export class ProductsService {
 
-  private products: Product[] = [];
+  private products: Product[] = []; // Aquí se crea este array vacio porque estamos trabajando con bd en memoria
 
   create(createProductDto: CreateProductDto) {
     const { name, description, price } = createProductDto;
