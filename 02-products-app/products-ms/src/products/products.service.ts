@@ -4,6 +4,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaClient, Product } from '@prisma/client';
 import { PaginationDto } from '../common/dto/pagination.dto';
 
+
 @Injectable()
 export class ProductsService extends PrismaClient implements OnModuleInit {
   
@@ -58,12 +59,14 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
   }
 
   async update(id: number, updateProductDto: UpdateProductDto) {
+
+    const { id:__, ...data } = updateProductDto; // Eliminamos el id del updateProductDto para obtener la data 
     
     await this.findOne(id)
     
     return this.product.update({
       where: { id },
-      data: updateProductDto
+      data: data
     })
   }
 
