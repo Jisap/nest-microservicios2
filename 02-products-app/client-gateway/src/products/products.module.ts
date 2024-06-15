@@ -7,9 +7,9 @@ import { PRODUCT_SERVICE, envs } from 'src/config';
   controllers: [ProductsController],
   providers: [],
   imports: [
-    ClientsModule.register([
+    ClientsModule.register([ 
       {
-        name: PRODUCT_SERVICE,
+        name: PRODUCT_SERVICE,    // Injection token
         transport: Transport.TCP,
         options: {
           host: envs.productsMicroservicesHost,
