@@ -1,5 +1,5 @@
 import { BadRequestException, Body, Controller, Delete, Get, Inject, Param, Patch, Post, Query } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { PaginationDto } from 'src/common';
 import { PRODUCT_SERVICE } from 'src/config';
@@ -36,10 +36,13 @@ export class ProductsController {
       return product                                                      // Si todo sale bien retornamos el producto
       
     } catch (error) {
-      throw new BadRequestException(error)
+      throw new RpcException(error)
     }
 
-      
+    //return this.productsClient.send({ cmd: 'find_one_product' }, {id}) 
+    //   .pipe(
+    //      catchError( err => { throw new RpcException(err) })
+    //)    
   }
 
   @Delete(':id')
