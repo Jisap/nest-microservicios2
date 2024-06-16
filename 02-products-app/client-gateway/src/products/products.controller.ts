@@ -1,5 +1,6 @@
-import { Body, Controller, Delete, Get, Inject, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Query } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { PaginationDto } from 'src/common';
 import { PRODUCT_SERVICE } from 'src/config';
 
 
@@ -17,10 +18,10 @@ export class ProductsController {
   }
 
   @Get()
-  findAllProducts() {
+  findAllProducts(@Query() paginationDto: PaginationDto) {
     return this.productsClient.send(
       { cmd: 'find_all_products' },       // Primer arg objeto del productController del microservicio
-      {}                                  // Segundo arg es el payload con el limit y la página desde donde empezaría la busqueda
+       paginationDto                      // Segundo arg es el payload (paginationDto) con el limit y la página desde donde empezaría la busqueda
     ) 
   }
 

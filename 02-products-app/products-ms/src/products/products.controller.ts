@@ -12,7 +12,7 @@ export class ProductsController {
 
 
   //@Post()
-  @MessagePattern({cmd: 'create_product'})                      // este objeto hay que colocarlo exactamente igual como esta en el productsController del gateway
+  @MessagePattern({cmd: 'create_product'})                      // Este objeto hay que colocarlo exactamente igual como esta en el productsController del gateway
   create(@Payload() createProductDto: CreateProductDto) {
     return this.productsService.create(createProductDto);
   }
