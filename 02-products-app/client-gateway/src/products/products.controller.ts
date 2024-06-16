@@ -1,5 +1,6 @@
-import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Query } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Inject, Param, Patch, Post, Query } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
 import { PaginationDto } from 'src/common';
 import { PRODUCT_SERVICE } from 'src/config';
 
@@ -9,7 +10,7 @@ import { PRODUCT_SERVICE } from 'src/config';
 export class ProductsController {
 
   constructor(
-    @Inject(PRODUCT_SERVICE) private readonly productsClient: ClientProxy,
+    @Inject(PRODUCT_SERVICE) private readonly productsClient: ClientProxy, // Conexión al microservicio de products
   ) {}
 
   @Post()
@@ -26,8 +27,19 @@ export class ProductsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id:string) {
-    return 'Esta función regresa un producto por id ' + id
+  async findOne(@Param('id') id:string) {
+
+    try {
+      const product = await firstValueFrom(                               // firstValueFrom permite recibir un observable como argumento y trabajarlo como una promesa
+        this.productsClient.send({ cmd: 'find_one_product' }, {id})       // de esta manera no hay que hacer ningun subscribe al observable.
+      );                                                                  // Se espera el primer valor que va a emitir
+      return product                                                      // Si todo sale bien retornamos el producto
+      
+    } catch (error) {
+      throw new BadRequestException(error)
+    }
+
+      
   }
 
   @Delete(':id')

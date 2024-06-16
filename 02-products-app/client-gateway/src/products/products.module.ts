@@ -9,11 +9,11 @@ import { PRODUCT_SERVICE, envs } from 'src/config';
   imports: [
     ClientsModule.register([ 
       {
-        name: PRODUCT_SERVICE,    // Injection token
+        name: PRODUCT_SERVICE,    // Injection token (nombre del servicio)
         transport: Transport.TCP,
         options: {
-          host: envs.productsMicroservicesHost,
-          port: envs.productsMicroservicesPort
+          host: envs.productsMicroservicesHost, // host
+          port: envs.productsMicroservicesPort  // port
         }
       }
     ])
