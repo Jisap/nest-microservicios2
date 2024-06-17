@@ -52,7 +52,10 @@ export class ProductsController {
 
   @Delete(':id')
   async deleteProduct(@Param('id') id: string) {   
-    return this.productsClient.send({ cmd: 'delete_product' },{id})
+    return this.productsClient.send({ cmd: 'delete_product' },{id}
+    ).pipe(
+      catchError(err => { throw new RpcException(err) })
+    )
   }
 
   @Patch(':id')
