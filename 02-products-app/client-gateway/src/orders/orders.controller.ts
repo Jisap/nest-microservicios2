@@ -1,8 +1,9 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Inject, ParseUUIDPipe, Query } from '@nestjs/common';
 import { ORDER_SERVICE } from 'src/config';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
-import { CreateOrderDto, OrderPaginationDto } from './dto';
+import { CreateOrderDto, OrderPaginationDto, StatusDto } from './dto';
 import { firstValueFrom } from 'rxjs';
+import { PaginationDto } from 'src/common';
 
 
 @Controller('orders')
@@ -27,7 +28,7 @@ export class OrdersController {
     );
   }
 
-  @Get(':id')
+  @Get('id/:id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
 
     try {
@@ -44,5 +45,23 @@ export class OrdersController {
     }
   }
 
-  
+  @Get(':status')
+  async findAllByStatus(
+    @Param() statusDto: StatusDto,              // Se recibe el status
+    @Query() paginationDto: PaginationDto,      // y la paginación
+  ) {
+
+    try {
+
+      return this.ordersClient.send(
+        'findAllOrders',{                       // El controlador del orderMicroservicios recibe
+          ...paginationDto,                     // la paginación y
+          status: statusDto.status              // el status
+        }
+      );
+
+    } catch (error) {
+      throw new RpcException(error)
+    }
+  }
 }
