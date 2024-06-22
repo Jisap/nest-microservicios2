@@ -12,7 +12,7 @@ export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @MessagePattern('createOrder')
-  create(@Payload() createOrderDto: CreateOrderDto) {
+  create(@Payload() createOrderDto: CreateOrderDto) { // createOrderDto solo contiene los items
     return this.ordersService.create(createOrderDto);
   }
 
