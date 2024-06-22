@@ -87,4 +87,26 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
 
     return product
   }
+
+  async validateProducts( ids: number[]){                 // Esta fn se encarga de asegurarse de que los ptos de la orden existan en bd
+  
+    ids = Array.from(new Set(ids));                       // [ids] sin duplicados 
+  
+    const products = await this.product.findMany({        // Buscamos en bd todos los ptos que coincidan con esos ids
+      where: {
+        id: {
+          in: ids
+        }
+      }
+    })
+
+    if( products.length !== ids.length){
+      throw new RpcException({
+        message: 'Some products were not found',
+        status: HttpStatus.BAD_REQUEST
+      })
+    }
+
+    return products;
+  }
 }
