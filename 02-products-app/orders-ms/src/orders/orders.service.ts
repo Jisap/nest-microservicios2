@@ -41,15 +41,15 @@ export class OrdersService extends PrismaClient implements OnModuleInit {
           (product) => product.id === orderItem.productId
         ).price
 
-        return acc + price * orderItem.quantity                                 // y dicho price se multiplica por la cantidad + acumulador
+        return acc + price * orderItem.quantity                                 // y dicho price se multiplica por la cantidad + acumulador => TotalAmount
 
       }, 0)
   
-      const totalItems = createOrderDto.items.reduce((acc, orderItem) => {
+      const totalItems = createOrderDto.items.reduce((acc, orderItem) => {      // Sistema similar para obtener el total de items 
         return acc + orderItem.quantity
       }, 0)
 
-      const order = await this.order.create({
+      const order = await this.order.create({                                   // Grabación en bd de la order
         data: {
           totalAmount: totalAmount,
           totalItems: totalItems,
