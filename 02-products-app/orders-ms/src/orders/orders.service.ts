@@ -45,25 +45,25 @@ export class OrdersService extends PrismaClient implements OnModuleInit {
 
       }, 0)
   
-      const totalItems = createOrderDto.items.reduce((acc, orderItem) => {      // Sistema similar para obtener el total de items 
+      const totalItems = createOrderDto.items.reduce((acc, orderItem) => {      // Obtenemos el total de items del dto 
         return acc + orderItem.quantity
       }, 0)
 
-      const order = await this.order.create({                                   // Grabación en bd de la order
-        data: {
+      const order = await this.order.create({                                   // Grabación en bd de la order que contendrá items: OrderItemDto[]
+        data: {                                                                 // y cada orderItemDto -> productId, quantity y price
           totalAmount: totalAmount,
           totalItems: totalItems,
           OrderItem: {
             createMany: {
-              data: createOrderDto.items.map((orderItem) => ({
-                price: products.find((product) => product.id === orderItem.productId).price,
-                productId: orderItem.productId,
-                quantity: orderItem.quantity
+              data: createOrderDto.items.map((orderItem) => ({                                 // Se mapean los items del dto
+                price: products.find((product) => product.id === orderItem.productId).price,   // (ids productos de bd === ids items del dto) -> pto.price 
+                productId: orderItem.productId,                                                // id del item del dto      
+                quantity: orderItem.quantity                                                   // quantity del item del dto 
               }))
             }
           }
         },
-        include: {
+        include: {                                                              // Se incluye en la order la relación de order con orderItem  
           OrderItem: {
             select: {
               price: true,
