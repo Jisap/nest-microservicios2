@@ -122,8 +122,17 @@ export class OrdersService extends PrismaClient implements OnModuleInit {
 
   async findOne(id: string) {
     
-    const order = await this.order.findFirst({
-      where: { id }
+    const order = await this.order.findFirst({    // order por id con sus relaciones OrderItem
+      where: { id },
+      include: {
+        OrderItem: {
+          select: {
+            price: true,
+            quantity: true,
+            productId: true,
+          }
+        }
+      }
     });
 
     if(!order){
@@ -132,8 +141,20 @@ export class OrdersService extends PrismaClient implements OnModuleInit {
         message: `Order with id ${id} not found`
       });
     }
+
+    const productIds = order.OrderItem.map(orderItem => orderItem.productId)  // Obtenemos de cada item su id
+
+    const products: any[] = await firstValueFrom(
+      this.productsClient.send({ cmd: 'validate_products' }, productIds)      // validamos en products_ms esos ids (deben existir en bd)
+    );
     
-    return order
+    return {                                                                        // retornamos
+      ...order,                                                                     // la order según id
+      OrderItem: order.OrderItem.map( orderItem => ({                               // de cada item
+        ...orderItem,                                                               // todas sus propiedades  
+        name: products.find( product => product.id === orderItem.productId ).name   // y el name en bd de products-ms segun product.id = id de la orderItem
+      }))
+    }
   }
 
   async changeStatus(changeOrderStatusDto: ChangeOrderStatusDto){
