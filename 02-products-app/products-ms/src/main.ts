@@ -10,7 +10,7 @@ async function bootstrap() {
 
   console.log(envs.natsServers);
 
-  // const app = await NestFactory.createMicroservice<MicroserviceOptions>(
+  // const app = await NestFactory.createMicroservice<MicroserviceOptions>( // Comunicación por TCP
   //   AppModule,
   //   {
   //     transport: Transport.TCP,
@@ -20,7 +20,7 @@ async function bootstrap() {
   //   }
   // );
 
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(  // Comunicación por NATS
     AppModule,
     {
       transport: Transport.NATS,
