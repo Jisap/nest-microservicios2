@@ -1,19 +1,20 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Inject, ParseUUIDPipe, Query } from '@nestjs/common';
-import { ORDER_SERVICE } from 'src/config';
+import { NATS_SERVICE, ORDER_SERVICE } from 'src/config';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { CreateOrderDto, OrderPaginationDto, StatusDto } from './dto';
 import { firstValueFrom } from 'rxjs';
 import { PaginationDto } from 'src/common';
 
 
+
 @Controller('orders')
 export class OrdersController {
 
-  constructor(@Inject(ORDER_SERVICE) private readonly ordersClient: ClientProxy,) {}
+  constructor(@Inject(NATS_SERVICE) private readonly client: ClientProxy,) {}
 
   @Post()
   create(@Body() createOrderDto: CreateOrderDto) {
-    return this.ordersClient.send(
+    return this.client.send(
       'createOrder',
       createOrderDto
     );
@@ -22,7 +23,7 @@ export class OrdersController {
   @Get()
   findAll(@Query() orderPaginationDto: OrderPaginationDto) {
     
-    return this.ordersClient.send(
+    return this.client.send(
       'findAllOrders',
       orderPaginationDto
     );
@@ -33,7 +34,7 @@ export class OrdersController {
 
     try {
       const order = await firstValueFrom(
-        this.ordersClient.send(
+        this.client.send(
           'findOneOrder',
           {id}
         )
@@ -53,7 +54,7 @@ export class OrdersController {
 
     try {
 
-      return this.ordersClient.send(
+      return this.client.send(
         'findAllOrders',{                       // El controlador del orderMicroservicios recibe
           ...paginationDto,                     // la paginación y
           status: statusDto.status              // el status
@@ -71,7 +72,7 @@ export class OrdersController {
     @Body() statusDto: StatusDto
   ){
     try {
-      return this.ordersClient.send(
+      return this.client.send(
         'changeOrderStatus', {
           id,
           status: statusDto.status
