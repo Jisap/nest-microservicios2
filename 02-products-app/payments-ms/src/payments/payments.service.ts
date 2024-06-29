@@ -50,9 +50,7 @@ export class PaymentsService {
     const sig = req.headers['stripe-signature'];
     
     let event: Stripe.Event;
-    //testing
-    //const endpointSecret = "whsec_7a0845e5967ba7101101bfcdd8d360939553c47a74c1c83782034ae782638371";
-    //real
+    
     const endpointSecret = envs.stripeEndpointSecret
 
     try {
