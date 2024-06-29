@@ -13,7 +13,7 @@ export class PaymentsService {
 
   async createPaymentSession(paymentSessionDto: PaymentSessionDto){
 
-    const { currency, items } = paymentSessionDto; 
+    const { currency, items, orderId } = paymentSessionDto; 
 
     const lineItems = items.map((item) => {
       return {
@@ -29,9 +29,11 @@ export class PaymentsService {
     })
     
     const session = await this.stripe.checkout.sessions.create({
-      // Colocar aquí el ID de mi orden
+    
       payment_intent_data: {
-        metadata: {}
+        metadata: {
+          orderId: orderId
+        }
       },
 
       line_items: lineItems,
@@ -64,7 +66,11 @@ export class PaymentsService {
     switch(event.type){
       case 'charge.succeeded':
         // TODO: llamar nuestro microservicio
-        console.log(event);
+        const chargeSucceeded = event.data.object;
+        console.log({
+          metadata: chargeSucceeded.metadata ,
+          orderId: chargeSucceeded.metadata.orderId
+        });
       break;
 
       default:
