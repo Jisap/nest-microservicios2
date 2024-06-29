@@ -37,8 +37,8 @@ export class PaymentsService {
       line_items: lineItems,
 
       mode: 'payment',
-      success_url: 'http://localhost:3003/payments/success',
-      cancel_url: 'http://localhost:3003/payments/cancel'
+      success_url: envs.stripeSuccessUrl,
+      cancel_url: envs.stripeCancelUrl,
 
     });
 
@@ -50,7 +50,10 @@ export class PaymentsService {
     const sig = req.headers['stripe-signature'];
     
     let event: Stripe.Event;
-    const endpointSecret = "whsec_7a0845e5967ba7101101bfcdd8d360939553c47a74c1c83782034ae782638371";
+    //testing
+    //const endpointSecret = "whsec_7a0845e5967ba7101101bfcdd8d360939553c47a74c1c83782034ae782638371";
+    //real
+    const endpointSecret = envs.stripeEndpointSecret
 
     try {
       event = this.stripe.webhooks.constructEvent(req['rawBody'], sig, endpointSecret);
@@ -60,6 +63,15 @@ export class PaymentsService {
     }
 
     console.log({event});
+    switch(event.type){
+      case 'charge.succeeded':
+        // TODO: llamar nuestro microservicio
+        console.log(event);
+      break;
+
+      default:
+        console.log(`Event ${event.type} not handled`)
+    }
 
     return res.status(200).json({sig})
   }
