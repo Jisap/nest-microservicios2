@@ -8,7 +8,7 @@ import { Request, Response } from 'express';
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
-  @Post('create-payment-session')
+  @Post('create-payment-session') // Aquí se envía el bodyRaw a stripe con los items que queremos comprar
   createPaymentSession(
     @Body() paymentSessionDto: PaymentSessionDto
   ){
@@ -32,7 +32,7 @@ export class PaymentsController {
   }
     
    @Post('webhook')
-   async stripeWebhook(@Req() req:Request, @Res() res:Response){ // Stripe envía su petición a nuestro server con express y Next la recibe con Nextjs/common
+   async stripeWebhook(@Req() req:Request, @Res() res:Response){ // Cuando Stripe recibe la session nos envía su respuesta a nuestro server con express y Next la recibe con Nextjs/common
     console.log('stripeWebhook llamado');
     return this.paymentsService.stripeWebhook(req, res)
    } 
